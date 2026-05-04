@@ -1,0 +1,62 @@
+--- SESIÓN: 2026-05-04 12:45:42 ---
+ID Correo: mail-ref-2125
+Correo electrónico: karimaelharchi@gmail.com
+Dirección de recogida: Calle Poeta Manuel Góngora
+Número de la calle: 12
+Número de enseres: 5
+Mobiliario y Descanso: Silla de comedor
+------------------------------
+ID Correo: mail-ref-2124
+Correo electrónico: gsm218@gmail.com
+Dirección de recogida: Calle Sos del Rey Catolico
+Número de la calle: 16
+Número de enseres: 4
+Mobiliario y Descanso: Canapé
+Colchón
+------------------------------
+ID Correo: mail-ref-2122
+Correo electrónico: josegcia@msn.com
+Dirección de recogida: Calle Conde Cifuentes
+Número de la calle: 20
+Número de enseres: 3
+Mobiliario y Descanso: Colchón
+Sanitarios y Reformas: Puerta
+------------------------------
+ID Correo: mail-ref-2121
+Correo electrónico: saratoroballesteros@gmail.com
+Dirección de recogida: Calle Purche
+Número de la calle: 9
+Número de enseres: 2
+Mobiliario y Descanso: Armario
+Librería
+------------------------------
+ID Correo: mail-ref-2119
+Correo electrónico: nataliiaa130695@gmail.com
+Dirección de recogida: Carretera Málaga
+Número de la calle: 67
+Número de enseres: 5
+Mobiliario y Descanso: Vitrina
+Línea Blanca (Electrodomésticos): Horno
+------------------------------
+ID Correo: mail-ref-2112
+Correo electrónico: masotomedina@gmail.com
+Dirección de recogida: Calle Cabañeros
+Número de la calle: 13
+Número de enseres: 4
+Línea Blanca (Electrodomésticos): Caldera
+------------------------------
+ID Correo: mail-ref-2110
+Correo electrónico: estinu@hotmail.com
+Dirección de recogida: Calle Arzobispo Pedro de Castro
+Número de la calle: 19
+Número de enseres: 1
+Mobiliario y Descanso: Colchón
+------------------------------
+ID Correo: mail-ref-2109
+Correo electrónico: giraldo.banares@gmail.com
+Dirección de recogida: Calle Mirlo
+Número de la calle: 10
+Número de enseres: 2
+Línea Blanca (Electrodomésticos): Frigorífico
+Nevera
+------------------------------

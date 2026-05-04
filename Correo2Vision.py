@@ -21,6 +21,21 @@ USER_PASS = os.getenv("WEBMAIL_PASS", "FCC_cuidamos_granada_2026")
 FCCMA_USER = os.getenv("FCCMA_USER", "gonzaled1014")
 FCCMA_PASS = os.getenv("FCCMA_PASS", "UPl()adingkr7")
 
+def guardar_en_txt(data_list):
+    nombre_archivo = "registro_correos.txt"
+    try:
+        with open(nombre_archivo, "a", encoding="utf-8") as f:
+            f.write(f"\n--- SESIÓN: {time.strftime('%Y-%m-%d %H:%M:%S')} ---\n")
+            for item in data_list:
+                f.write(f"ID Correo: {item.get('mail_id')}\n")
+                for clave, valor in item.items():
+                    if clave != "mail_id":
+                        f.write(f"{clave}: {valor}\n")
+                f.write("-" * 30 + "\n")
+        print(f"\n[SISTEMA] Respaldo guardado en: {nombre_archivo}")
+    except Exception as e:
+        print(f"Error al guardar el TXT: {e}")
+
 def iniciar_acceso():
     try:
         driver.get("https://dinahosting.email/login")
@@ -68,6 +83,9 @@ def iniciar_acceso():
                     wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "ul.webmail__mails-list")))
             except Exception as e:
                 print(f"Error en correo {mail_id}: {e}")
+        
+        if all_extracted_data:
+            guardar_en_txt(all_extracted_data)
         return all_extracted_data
     except Exception as e:
         print(f"Error general Dinahosting: {e}")
@@ -103,6 +121,15 @@ def rellenar_formulario_fccma(data_list):
         """
         return driver.execute_script(script)
 
+    def paste_text(element, text):
+        if not element: return
+        driver.execute_script("""
+            arguments[0].value = arguments[1];
+            arguments[0].dispatchEvent(new Event('input', { bubbles: true }));
+            arguments[0].dispatchEvent(new Event('change', { bubbles: true }));
+            arguments[0].dispatchEvent(new Event('blur', { bubbles: true }));
+        """, element, str(text))
+
     def type_slowly(element, text):
         if not element: return
         element.click()
@@ -110,11 +137,7 @@ def rellenar_formulario_fccma(data_list):
         for char in str(text):
             element.send_keys(char)
             time.sleep(0.05)
-        driver.execute_script("""
-            arguments[0].dispatchEvent(new Event('input', { bubbles: true }));
-            arguments[0].dispatchEvent(new Event('change', { bubbles: true }));
-            arguments[0].dispatchEvent(new Event('blur', { bubbles: true }));
-        """, element)
+        driver.execute_script("arguments[0].dispatchEvent(new Event('blur', { bubbles: true }));", element)
 
     def open_flechita(field_name):
         script = f"""
@@ -170,7 +193,7 @@ def rellenar_formulario_fccma(data_list):
     
     for item_data in data_list:
         try:
-            print(f"\n> Procesando correo ID: {item_data.get('mail_id')}")
+            print(f"\n> Procesando correo: {item_data.get('mail_id')}")
 
             wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "action-bar[main-bar]")))
             driver.execute_script("""
@@ -182,8 +205,7 @@ def rellenar_formulario_fccma(data_list):
             wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "form-field[field-name='ior_inc']")))
             time.sleep(2)
 
-            # --- PASO 1: SELECCIONAR TIPO (LO PRIMERO PARA DISPARAR CARGA) ---
-            print("  > 1. Tipo: Seleccionando 'recogida de muebles y enseres'...")
+            # --- 1. TIPO (ESCRITURA LENTA) ---
             open_flechita("tin_inc")
             time.sleep(1)
             target_type = get_element_shadow("tin_inc")
@@ -193,14 +215,10 @@ def rellenar_formulario_fccma(data_list):
                 click_first_option("tin_inc")
                 driver.execute_script("document.activeElement.blur();")
 
-            # --- PASO 2: RELLENAR EL RESTO MIENTRAS EL SISTEMA CARGA DETALLE1 ---
-            print("  > 2. Rellenando datos generales...")
-            
-            # Solicitado por
+            # --- 2. RESTO DE DATOS ---
             sol_field = get_element_shadow("ior_inc")
-            if sol_field: type_slowly(sol_field, "BSRME")
+            if sol_field: paste_text(sol_field, "BSRME")
 
-            # Dirección y Número
             direccion_original = item_data.get("Dirección de recogida", "")
             direccion_busqueda = " ".join(direccion_original.split()[1:])
             driver.execute_script("""
@@ -218,52 +236,51 @@ def rellenar_formulario_fccma(data_list):
                 click_first_option("calle")
 
             num_field = get_element_shadow("numero")
-            if num_field: type_slowly(num_field, item_data.get("Número de la calle", ""))
+            if num_field: paste_text(num_field, item_data.get("Número de la calle", ""))
             
-            nen_field = get_element_shadow("nen_inc")
-            if nen_field: type_slowly(nen_field, item_data.get("Número de enseres", ""))
+            num_enseres = item_data.get("Número de enseres", "1")
+            nel_field = get_element_shadow("nel_inc")
+            if nel_field: paste_text(nel_field, num_enseres)
 
-            # Prioridad
             open_flechita("pri_inc")
             time.sleep(1)
             target_pri = get_element_shadow("pri_inc")
             if target_pri:
-                type_slowly(target_pri, "Alta")
-                time.sleep(1)
+                paste_text(target_pri, "Alta")
+                time.sleep(0.5)
                 click_first_option("pri_inc")
 
-            # Observaciones
             muebles = item_data.get("Mobiliario y Descanso", "").replace("\n", " ").strip()
             raee = item_data.get("Aparatos Electrónicos (RAEE)", "").replace("\n", " ").strip()
             obs_list = []
             if muebles: obs_list.append(f"Muebles: {muebles}")
             if raee: obs_list.append(f"RAEE: {raee}")
             text_obs = " | ".join(obs_list) if obs_list else "Recogida de enseres"
-            obs_field = get_element_shadow("obs_inc", tag="textarea")
-            if obs_field: type_slowly(obs_field, text_obs)
-
-            # --- PASO 3: MARCAR 'OTRO' (ÚLTIMO PASO ANTES DE GUARDAR) ---
-            print("  > 3. Marcando checkbox 'Otro' en detalle1...")
-            open_flechita("detalle1")
-            time.sleep(2) # Pausa mínima final de seguridad
             
-            if marcar_checkbox_otro("detalle1"):
-                print("  [OK]: Checkbox 'Otro' marcado.")
-            else:
-                print("  [!] No se pudo marcar 'Otro'.")
+            obs_field = get_element_shadow("obs_inc", tag="textarea")
+            if obs_field: paste_text(obs_field, text_obs)
 
-            # --- PASO 4: GUARDAR ---
-            print("  > 4. Guardando formulario...")
+            # --- 3. CHECKBOX 'OTRO' ---
+            open_flechita("detalle1")
+            time.sleep(2) 
+            marcar_checkbox_otro("detalle1")
+
+            # --- 4. GUARDAR (BOTÓN ACEPTAR -> continue-button) ---
+            print("  > Pulsando Aceptar...")
+            time.sleep(1)
             driver.execute_script("""
-                const btns = document.querySelectorAll('input-button[name="finish-button"]');
-                if (btns.length > 0) btns[btns.length - 1].shadowRoot.querySelector('button').click();
+                const btns = document.querySelectorAll('input-button[name="continue-button"]');
+                if (btns.length > 0) {
+                    const shadowBtn = btns[btns.length - 1].shadowRoot.querySelector('button');
+                    if (shadowBtn) shadowBtn.click();
+                }
             """)
             
-            print("  OK. Registro completado.")
-            time.sleep(2)
+            print("  [OK]")
+            time.sleep(3)
             
         except Exception as e:
-            print(f"  X Error: {e}")
+            print(f"  [!] Error: {e}")
             time.sleep(5)
 
 if __name__ == "__main__":
