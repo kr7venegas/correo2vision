@@ -1,291 +1,226 @@
+import os
+import time
+import ast
+import pyautogui
+from datetime import datetime, timedelta
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import os
-import time
 
-# 1. Configuración de opciones del navegador
-chrome_options = Options()
-chrome_options.add_argument("--start-maximized")
-chrome_options.add_experimental_option("detach", True)
+# ==================================================
+# CONFIGURACIÓN GENERAL
+# ==================================================
+HACE_CUANTOS_DIAS = 0 
 
-service = Service() 
-driver = webdriver.Chrome(service=service, options=chrome_options)
+# ==================================================
+# CONFIGURACIÓN DE COORDENADAS
+# ==================================================
+COORD_BOTON_AÑADIR     = (532, 288)    
+COORD_CAMPO_TIPO       = (972, 455)      
+COORD_SOLICITADO       = (1079, 303)
+COORD_CALLE            = (1110, 358)
+COORD_NUMERO           = (1212, 354)
+COORD_SCROLL_ENSERES   = (842, 594)  
+COORD_ENSERES          = (741, 532)  
+COORD_OBSERVACIONES    = (750, 680)
+COORD_BOTON_GUARDAR    = (1202, 214)
 
-# --- Credenciales ---
+# ==================================================
+# SEGURIDAD Y CREDENCIALES
+# ==================================================
+pyautogui.FAILSAFE = True  
 USER_EMAIL = os.getenv("WEBMAIL_USER", "info@cuidamosgranada.com")
-USER_PASS = os.getenv("WEBMAIL_PASS", "FCC_cuidamos_granada_2026")
-FCCMA_USER = os.getenv("FCCMA_USER", "gonzaled1014")
-FCCMA_PASS = os.getenv("FCCMA_PASS", "UPl()adingkr7")
+USER_PASS  = os.getenv("WEBMAIL_PASS", "FCC_cuidamos_granada_2026")
+FCCMA_USER = os.getenv("FCCMA_USER",  "gonzaled1014")
+FCCMA_PASS = os.getenv("FCCMA_PASS",  "UPl()adingkr7")
 
-def guardar_en_txt(data_list):
+# --- PERSISTENCIA DE DATOS ---
+
+def cargar_datos_locales(dias_atras):
     nombre_archivo = "registro_correos.txt"
+    if not os.path.exists(nombre_archivo): return None
+    
+    fecha_objetivo = (datetime.now() - timedelta(days=dias_atras)).strftime('%Y-%m-%d')
     try:
-        with open(nombre_archivo, "a", encoding="utf-8") as f:
-            f.write(f"\n--- SESIÓN: {time.strftime('%Y-%m-%d %H:%M:%S')} ---\n")
-            for item in data_list:
-                f.write(f"ID Correo: {item.get('mail_id')}\n")
-                for clave, valor in item.items():
-                    if clave != "mail_id":
-                        f.write(f"{clave}: {valor}\n")
-                f.write("-" * 30 + "\n")
-        print(f"\n[SISTEMA] Respaldo guardado en: {nombre_archivo}")
-    except Exception as e:
-        print(f"Error al guardar el TXT: {e}")
+        with open(nombre_archivo, "r", encoding="utf-8") as f:
+            lineas = f.readlines()
+            if lineas and lineas[0].strip() == fecha_objetivo:
+                print(f"[SISTEMA] Usando datos guardados de la fecha: {fecha_objetivo}")
+                return ast.literal_eval("".join(lineas[1:]))
+    except: return None
+    return None
 
-def iniciar_acceso():
+def guardar_datos_locales(data, dias_atras):
+    fecha_archivo = (datetime.now() - timedelta(days=dias_atras)).strftime('%Y-%m-%d')
+    try:
+        with open("registro_correos.txt", "w", encoding="utf-8") as f:
+            f.write(f"{fecha_archivo}\n{str(data)}")
+    except Exception as e:
+        print(f"Error guardando TXT: {e}")
+
+# --- PROCESO 1: EXTRACCIÓN DINAHSTING ---
+
+def extraer_de_dinahosting(dias_atras):
+    print(f"[DINAHOSTING] Buscando correos de hace {dias_atras} días...")
+    chrome_options = Options()
+    chrome_options.add_argument("--start-maximized")
+    driver = webdriver.Chrome(options=chrome_options)
+    wait = WebDriverWait(driver, 15)
+    
+    fecha_dt = datetime.now() - timedelta(days=dias_atras)
+    meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"]
+    fecha_busqueda = f"{fecha_dt.day} {meses[fecha_dt.month - 1]}"
+
     try:
         driver.get("https://dinahosting.email/login")
-        wait = WebDriverWait(driver, 10)
-        user_field = wait.until(EC.presence_of_element_located((By.ID, "user")))
-        user_field.send_keys(USER_EMAIL)
+        wait.until(EC.presence_of_element_located((By.ID, "user"))).send_keys(USER_EMAIL)
         driver.find_element(By.ID, "password").send_keys(USER_PASS)
         driver.find_element(By.ID, "password").submit()
-        
-        wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "li.list-group-item")))
-        asunto_buscado = "Se ha rellenado el formulario de recogida de muebles/enseres"
-        fecha_hoy = time.strftime("%d/%m/%Y")
-        
-        target_ids = []
-        listado = driver.find_elements(By.CSS_SELECTOR, "li.list-group-item")
-        
-        for email in listado:
-            try:
-                asunto = email.find_element(By.CSS_SELECTOR, "div.small span.ng-binding").text.strip()
-                fecha_texto = email.find_element(By.CSS_SELECTOR, "small.text-muted").text.strip()
-                if asunto == asunto_buscado:
-                    if "/" not in fecha_texto or "Hoy" in fecha_texto or fecha_hoy in fecha_texto:
-                        target_ids.append(email.get_attribute("id"))
-            except: continue
 
-        all_extracted_data = []
-        for index, mail_id in enumerate(target_ids):
-            try:
-                elemento = wait.until(EC.element_to_be_clickable((By.ID, mail_id)))
-                elemento.click()
-                time.sleep(3)
-                mail_body = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "#preview-mail-detail div[ng-bind-html^='wmdc.mail.body']")))
-                
-                nombres = mail_body.find_elements(By.CSS_SELECTOR, "td.field-name strong")
-                valores = mail_body.find_elements(By.CSS_SELECTOR, "td.field-value")
-                
-                if nombres and valores:
-                    form_data = {"mail_id": mail_id}
-                    for n_el, v_el in zip(nombres, valores):
-                        form_data[n_el.text.replace(':', '').strip()] = v_el.text.strip()
-                    all_extracted_data.append(form_data)
-                
-                if index < len(target_ids) - 1:
-                    driver.back()
-                    wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "ul.webmail__mails-list")))
-            except Exception as e:
-                print(f"Error en correo {mail_id}: {e}")
+        wait.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "li.list-group-item")))
+        asunto_target = "Se ha rellenado el formulario de recogida de muebles/enseres"
         
-        if all_extracted_data:
-            guardar_en_txt(all_extracted_data)
-        return all_extracted_data
+        mails_objetivo = []
+        elementos = driver.find_elements(By.CSS_SELECTOR, "li.list-group-item")
+        
+        for em in elementos:
+            asunto = em.find_element(By.CSS_SELECTOR, "div.small span.ng-binding").text.strip()
+            fecha_texto = em.find_element(By.CSS_SELECTOR, "small.text-muted").text.strip().lower()
+            
+            es_fecha_correcta = (":" in fecha_texto) if dias_atras == 0 else (fecha_busqueda in fecha_texto)
+            
+            if asunto == asunto_target and es_fecha_correcta:
+                mails_objetivo.append(em.get_attribute("id"))
+
+        print(f"[DINAHOSTING] Encontrados {len(mails_objetivo)} correos para la fecha seleccionada.")
+
+        resultados = []
+        for mid in mails_objetivo:
+            driver.find_element(By.ID, mid).click()
+            time.sleep(2)
+            body = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "div[ng-bind-html^='wmdc.mail.body']")))
+            nombres = body.find_elements(By.CSS_SELECTOR, "td.field-name strong")
+            valores = body.find_elements(By.CSS_SELECTOR, "td.field-value")
+            
+            dic = {"mail_id": mid}
+            for n, v in zip(nombres, valores):
+                dic[n.text.replace(':', '').strip()] = v.text.strip()
+            resultados.append(dic)
+            driver.back()
+            time.sleep(1)
+        
+        if resultados:
+            guardar_datos_locales(resultados, dias_atras)
+        
+        driver.quit()
+        return resultados
     except Exception as e:
-        print(f"Error general Dinahosting: {e}")
+        print(f"Error Dinahosting: {e}")
+        driver.quit()
         return []
 
-def iniciar_sesion_fccma():
-    try:
-        driver.get("https://portal.fccma.com/vision/#/areas")
-        wait = WebDriverWait(driver, 15)
-        wait.until(EC.presence_of_element_located((By.ID, "username"))).send_keys(FCCMA_USER)
-        driver.find_element(By.ID, "password").send_keys(FCCMA_PASS)
-        driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
-        wait.until(EC.url_contains("/areas"))
-        driver.get("https://portal.fccma.com/vision/#/ma_prc_609_300/INC/93545/d/1")
-        time.sleep(5)
-    except Exception as e:
-        print(f"Error login VISION: {e}")
+# --- PROCESO 2: NAVEGACIÓN VISION ---
 
-def rellenar_formulario_fccma(data_list):
-    wait = WebDriverWait(driver, 15)
+def preparar_vision():
+    options = Options()
+    options.add_argument("--start-maximized")
+    options.add_experimental_option("detach", True)
+    driver = webdriver.Chrome(options=options)
+    wait = WebDriverWait(driver, 20)
 
-    def get_element_shadow(field_name, tag="input"):
-        script = f"""
-            const findLast = (sel) => {{
-                const elms = document.querySelectorAll(sel);
-                return elms.length > 0 ? elms[elms.length - 1] : null;
-            }};
-            let field = findLast(`[field-name='{field_name}'], [name='{field_name}']`);
-            if (!field) return null;
-            let inner = field.tagName.includes('INPUT-') ? field : field.querySelector('input-text, input-number, input-selector, input-textarea');
-            if (!inner || !inner.shadowRoot) return null;
-            return inner.shadowRoot.querySelector('{tag}');
-        """
-        return driver.execute_script(script)
-
-    def paste_text(element, text):
-        if not element: return
-        driver.execute_script("""
-            arguments[0].value = arguments[1];
-            arguments[0].dispatchEvent(new Event('input', { bubbles: true }));
-            arguments[0].dispatchEvent(new Event('change', { bubbles: true }));
-            arguments[0].dispatchEvent(new Event('blur', { bubbles: true }));
-        """, element, str(text))
-
-    def type_slowly(element, text):
-        if not element: return
-        element.click()
-        driver.execute_script("arguments[0].value = '';", element)
-        for char in str(text):
-            element.send_keys(char)
-            time.sleep(0.05)
-        driver.execute_script("arguments[0].dispatchEvent(new Event('blur', { bubbles: true }));", element)
-
-    def open_flechita(field_name):
-        script = f"""
-            const findLast = (sel) => {{
-                const elms = document.querySelectorAll(sel);
-                return elms.length > 0 ? elms[elms.length - 1] : null;
-            }};
-            let field = findLast(`[field-name='{field_name}'], [name='{field_name}']`);
-            if (!field) return;
-            let inner = field.tagName === 'INPUT-SELECTOR' ? field : field.querySelector('input-selector');
-            if (!inner || !inner.shadowRoot) return;
-            const arrow = inner.shadowRoot.querySelector('icon-dropdown-selector, .icon-selector, button, .arrow');
-            if (arrow) arrow.click();
-        """
-        driver.execute_script(script)
-
-    def marcar_checkbox_otro(field_name):
-        script = f"""
-            const findLast = (sel) => {{
-                const elms = document.querySelectorAll(sel);
-                return elms.length > 0 ? elms[elms.length - 1] : null;
-            }};
-            let field = findLast(`[field-name='{field_name}'], [name='{field_name}']`);
-            if (!field) return false;
-            let inner = field.tagName === 'INPUT-SELECTOR' ? field : field.querySelector('input-selector');
-            if (!inner || !inner.shadowRoot) return false;
-            const options = inner.shadowRoot.querySelectorAll('option-row, .option-item, label');
-            for (let opt of options) {{
-                if (opt.textContent.toLowerCase().includes('otro')) {{
-                    const box = opt.querySelector('input[type="checkbox"]') || opt.querySelector('.checkbox-icon') || opt;
-                    box.click();
-                    return true;
-                }}
-            }}
-            return false;
-        """
-        return driver.execute_script(script)
-
-    def click_first_option(field_name):
-        script = f"""
-            const findLast = (sel) => {{
-                const elms = document.querySelectorAll(sel);
-                return elms.length > 0 ? elms[elms.length - 1] : null;
-            }};
-            let field = findLast(`[field-name='{field_name}'], [name='{field_name}']`);
-            if (!field) return;
-            let inner = field.tagName === 'INPUT-SELECTOR' ? field : field.querySelector('input-selector');
-            if (!inner || !inner.shadowRoot) return;
-            const firstOption = inner.shadowRoot.querySelector('option-row, label');
-            if (firstOption) firstOption.click();
-        """
-        driver.execute_script(script)
+    print("Iniciando sesión en Vision...")
+    driver.get("https://portal.fccma.com/vision/#/areas")
+    wait.until(EC.presence_of_element_located((By.ID, "username"))).send_keys(FCCMA_USER)
+    driver.find_element(By.ID, "password").send_keys(FCCMA_PASS)
+    driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
     
-    for item_data in data_list:
-        try:
-            print(f"\n> Procesando correo: {item_data.get('mail_id')}")
+    wait.until(EC.url_contains("/areas"))
+    driver.get("https://portal.fccma.com/vision/#/ma_prc_609_300/INC/93545/d/1")
+    time.sleep(10) 
+    return driver
 
-            wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "action-bar[main-bar]")))
-            driver.execute_script("""
-                const actionBar = document.querySelector('action-bar[main-bar]');
-                const btn = actionBar.shadowRoot.querySelector('bar-button[type="add"]');
-                if (btn) btn.click();
-            """)
-            
-            wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "form-field[field-name='ior_inc']")))
-            time.sleep(2)
+# --- PROCESO 3: RELLENADO POR PÍXELES ---
 
-            # --- 1. TIPO (ESCRITURA LENTA) ---
-            open_flechita("tin_inc")
-            time.sleep(1)
-            target_type = get_element_shadow("tin_inc")
-            if target_type:
-                type_slowly(target_type, "recogida de muebles y enseres")
-                time.sleep(2)
-                click_first_option("tin_inc")
-                driver.execute_script("document.activeElement.blur();")
+def ejecutar_rellenado_pixeles(datos):
+    print(f"Comenzando rellenado de {len(datos)} registros. No muevas el ratón.")
+    pyautogui.press('alt')
+    time.sleep(0.5)
 
-            # --- 2. RESTO DE DATOS ---
-            sol_field = get_element_shadow("ior_inc")
-            if sol_field: paste_text(sol_field, "BSRME")
+    for item in datos:
+        # --- LÓGICA DE OBSERVACIONES MODIFICADA ---
+        # Solo extrae el valor directamente sin incluir la categoría anterior
+        detalles = []
+        for clave in ["Mobiliario y Descanso", "Aparatos Electrónicos (RAEE)", "Línea Blanca (Electrodomésticos)"]:
+            valor = item.get(clave, "").strip()
+            if valor: 
+                detalles.append(valor)
+        
+        texto_obs = " | ".join(detalles) if detalles else "Recogida de muebles/enseres"
 
-            direccion_original = item_data.get("Dirección de recogida", "")
-            direccion_busqueda = " ".join(direccion_original.split()[1:])
-            driver.execute_script("""
-                const elms = document.querySelectorAll("[field-name='calle'], [name='calle']");
-                const field = elms[elms.length - 1];
-                const inner = field.tagName === 'INPUT-SELECTOR' ? field : field.querySelector('input-selector');
-                const input = inner.shadowRoot.querySelector('input');
-                if (input) input.click();
-            """)
-            time.sleep(1)
-            addr_input = get_element_shadow("calle")
-            if addr_input:
-                type_slowly(addr_input, direccion_busqueda)
-                time.sleep(2)
-                click_first_option("calle")
+        # 1. Botón Añadir
+        pyautogui.click(COORD_BOTON_AÑADIR)
+        time.sleep(4)
+        
+        # 2. Tipo Incidencia
+        pyautogui.click(COORD_CAMPO_TIPO)
+        pyautogui.write("recogida de muebles y enseres", interval=0.03)
+        time.sleep(3)
+        pyautogui.press('down')
+        pyautogui.press('enter')
+        
+        # 3. Solicitado
+        pyautogui.click(COORD_SOLICITADO)
+        pyautogui.write("BSRME")
+        time.sleep(0.5)
+        pyautogui.press('tab')
 
-            num_field = get_element_shadow("numero")
-            if num_field: paste_text(num_field, item_data.get("Número de la calle", ""))
-            
-            num_enseres = item_data.get("Número de enseres", "1")
-            nel_field = get_element_shadow("nel_inc")
-            if nel_field: paste_text(nel_field, num_enseres)
+        # 4. Calle (MODIFICADO PARA BAJAR 5 VECES)
+        dir_orig = item.get("Dirección de recogida", "")
+        calle = " ".join(dir_orig.split()[1:]) if len(dir_orig.split()) > 1 else dir_orig
+        pyautogui.click(COORD_CALLE)
+        pyautogui.write(calle, interval=0.04)
+        time.sleep(4) 
+        
+        # Bajamos 5 veces para asegurar alcanzar el último elemento de la lista desplegable
+        pyautogui.press('enter')
+        time.sleep(1)
 
-            open_flechita("pri_inc")
-            time.sleep(1)
-            target_pri = get_element_shadow("pri_inc")
-            if target_pri:
-                paste_text(target_pri, "Alta")
-                time.sleep(0.5)
-                click_first_option("pri_inc")
+        # 5. Número
+        pyautogui.click(COORD_NUMERO)
+        pyautogui.hotkey('ctrl', 'a')
+        pyautogui.press('backspace')
+        pyautogui.write(str(item.get("Número de la calle", "1")))
+        
+        # 6. SCROLL DOBLE CLICK
+        pyautogui.doubleClick(COORD_SCROLL_ENSERES)
+        time.sleep(2)
+        
+        # 7. Número de enseres
+        pyautogui.click(COORD_ENSERES)
+        pyautogui.write(str(item.get("Número de enseres", "1")))
+        
+        # 8. Observaciones
+        pyautogui.click(COORD_OBSERVACIONES)
+        pyautogui.write(texto_obs.replace("\n", " "), interval=0.01)
+        
+        # 9. Guardar
+        pyautogui.click(COORD_BOTON_GUARDAR)
+        time.sleep(8) 
 
-            muebles = item_data.get("Mobiliario y Descanso", "").replace("\n", " ").strip()
-            raee = item_data.get("Aparatos Electrónicos (RAEE)", "").replace("\n", " ").strip()
-            obs_list = []
-            if muebles: obs_list.append(f"Muebles: {muebles}")
-            if raee: obs_list.append(f"RAEE: {raee}")
-            text_obs = " | ".join(obs_list) if obs_list else "Recogida de enseres"
-            
-            obs_field = get_element_shadow("obs_inc", tag="textarea")
-            if obs_field: paste_text(obs_field, text_obs)
-
-            # --- 3. CHECKBOX 'OTRO' ---
-            open_flechita("detalle1")
-            time.sleep(2) 
-            marcar_checkbox_otro("detalle1")
-
-            # --- 4. GUARDAR (BOTÓN ACEPTAR -> continue-button) ---
-            print("  > Pulsando Aceptar...")
-            time.sleep(1)
-            driver.execute_script("""
-                const btns = document.querySelectorAll('input-button[name="continue-button"]');
-                if (btns.length > 0) {
-                    const shadowBtn = btns[btns.length - 1].shadowRoot.querySelector('button');
-                    if (shadowBtn) shadowBtn.click();
-                }
-            """)
-            
-            print("  [OK]")
-            time.sleep(3)
-            
-        except Exception as e:
-            print(f"  [!] Error: {e}")
-            time.sleep(5)
+# --- FLUJO DE EJECUCIÓN ---
 
 if __name__ == "__main__":
-    extracted_email_data = iniciar_acceso() 
-    if extracted_email_data:
-        iniciar_sesion_fccma()
-        rellenar_formulario_fccma(extracted_email_data)
-    print("\nProceso terminado.")
+    datos = cargar_datos_locales(HACE_CUANTOS_DIAS)
+    
+    if not datos:
+        datos = extraer_de_dinahosting(HACE_CUANTOS_DIAS)
+
+    if datos:
+        driver_v = preparar_vision()
+        ejecutar_rellenado_pixeles(datos)
+        print("Finalizado con éxito.")
+    else:
+        print(f"No hay datos disponibles para la fecha seleccionada ({HACE_CUANTOS_DIAS} días atrás).")
