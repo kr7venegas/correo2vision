@@ -1,6 +1,7 @@
 import os
 import time
 import ast
+import csv
 import pyautogui
 from datetime import datetime, timedelta
 from selenium import webdriver
@@ -61,7 +62,102 @@ def guardar_datos_locales(data, dias_atras):
     except Exception as e:
         print(f"Error guardando TXT: {e}")
 
-# --- PROCESO 1: EXTRACCIÓN DINAHSTING ---
+def construir_descripcion(item):
+    """Construye el texto de descripción/observaciones uniendo las categorías de enseres."""
+    detalles = []
+    for clave in ["Mobiliario y Descanso", "Aparatos Electrónicos (RAEE)", "Línea Blanca (Electrodomésticos)"]:
+        valor = item.get(clave, "").strip()
+        if valor:
+            detalles.append(valor)
+    return " | ".join(detalles) if detalles else "Recogida de muebles/enseres"
+
+def guardar_csv(data, dias_atras):
+    """Genera un CSV con el formato de wp_incidencias_BSRME a partir de los datos extraídos."""
+    fecha_archivo = (datetime.now() - timedelta(days=dias_atras)).strftime('%Y-%m-%d')
+    nombre_csv = f"incidencias_BSRME_{fecha_archivo}.csv"
+
+    cabecera = [
+        "CodAviso", "FechaHoraRegistro", "Prioridad", "localizacion", "barrio",
+        "calle", "numcalle", "incidencia", "descripcion", "estado",
+        "nombre_peticionario", "procedencia", "telefono", "movil", "email",
+        "usuario_asignado", "solucion", "fecha_fin", "tipo_resolucion",
+        "Foto1", "Foto2", "Foto3", "Foto4", "FotoR1", "FotoR2",
+        "categoria", "canal", "incidencia_subtipo", "incidencia_detalle",
+        "fecha_evento", "CT", "ampliacion_direccion", "fecha_inicio",
+        "descripcion_iniciado", "matricula", "ID"
+    ]
+
+    fecha_hora_registro = datetime.now().strftime('%d/%m/%Y %H:%M')
+
+    try:
+        with open(nombre_csv, "w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f, delimiter=";")
+            writer.writerow(cabecera)
+
+            for i, item in enumerate(data, start=1):
+                # Construir código de aviso: CC-aaaa-mm-dd-i
+                cod_aviso = f"CC-{fecha_archivo}-{i}"
+
+                # Extraer calle y número de la dirección de recogida
+                dir_orig = item.get("Dirección de recogida", "")
+                partes = dir_orig.split()
+                if len(partes) > 1:
+                    calle = " ".join(partes[1:])
+                else:
+                    calle = dir_orig
+                numcalle = item.get("Número de la calle", "0")
+
+                # Localización completa (dejamos la dirección original si existe)
+                localizacion = dir_orig
+
+                # Descripción igual que observaciones
+                descripcion = construir_descripcion(item)
+
+                fila = [
+                    cod_aviso,           # CodAviso
+                    fecha_hora_registro, # FechaHoraRegistro
+                    "Baja",              # Prioridad
+                    localizacion,        # localizacion
+                    "",                  # barrio (vacío)
+                    calle,               # calle
+                    numcalle,            # numcalle
+                    "solicitud de retirada de muebles y enseres",  # incidencia
+                    descripcion,         # descripcion
+                    "A revisar por el Área",  # estado
+                    "",                  # nombre_peticionario
+                    "",                  # procedencia
+                    "",                  # telefono
+                    "",                  # movil
+                    "",                  # email
+                    "SERVICIO_RECOGIDA_MUEBLES",  # usuario_asignado
+                    "",                  # solucion
+                    "",                  # fecha_fin
+                    "",                  # tipo_resolucion
+                    "",                  # Foto1
+                    "",                  # Foto2
+                    "",                  # Foto3
+                    "",                  # Foto4
+                    "",                  # FotoR1
+                    "",                  # FotoR2
+                    "",                  # categoria
+                    "CALLCENTER",        # canal
+                    "BSRME",             # incidencia_subtipo
+                    "",                  # incidencia_detalle
+                    "",                  # fecha_evento
+                    "",                  # CT
+                    "",                  # ampliacion_direccion
+                    "",                  # fecha_inicio
+                    "",                  # descripcion_iniciado
+                    "",                  # matricula
+                    "",                  # ID
+                ]
+                writer.writerow(fila)
+
+        print(f"[CSV] Archivo guardado: {nombre_csv}")
+    except Exception as e:
+        print(f"Error guardando CSV: {e}")
+
+# --- PROCESO 1: EXTRACCIÓN DINAHOSTING ---
 
 def extraer_de_dinahosting(dias_atras):
     print(f"[DINAHOSTING] Buscando correos de hace {dias_atras} días...")
@@ -114,6 +210,7 @@ def extraer_de_dinahosting(dias_atras):
         
         if resultados:
             guardar_datos_locales(resultados, dias_atras)
+            guardar_csv(resultados, dias_atras)  # <-- Genera el CSV junto al TXT
         
         driver.quit()
         return resultados
@@ -150,15 +247,7 @@ def ejecutar_rellenado_pixeles(datos):
     time.sleep(0.5)
 
     for item in datos:
-        # --- LÓGICA DE OBSERVACIONES MODIFICADA ---
-        # Solo extrae el valor directamente sin incluir la categoría anterior
-        detalles = []
-        for clave in ["Mobiliario y Descanso", "Aparatos Electrónicos (RAEE)", "Línea Blanca (Electrodomésticos)"]:
-            valor = item.get(clave, "").strip()
-            if valor: 
-                detalles.append(valor)
-        
-        texto_obs = " | ".join(detalles) if detalles else "Recogida de muebles/enseres"
+        texto_obs = construir_descripcion(item)
 
         # 1. Botón Añadir
         pyautogui.click(COORD_BOTON_AÑADIR)
@@ -177,14 +266,12 @@ def ejecutar_rellenado_pixeles(datos):
         time.sleep(0.5)
         pyautogui.press('tab')
 
-        # 4. Calle (MODIFICADO PARA BAJAR 5 VECES)
+        # 4. Calle
         dir_orig = item.get("Dirección de recogida", "")
         calle = " ".join(dir_orig.split()[1:]) if len(dir_orig.split()) > 1 else dir_orig
         pyautogui.click(COORD_CALLE)
         pyautogui.write(calle, interval=0.04)
         time.sleep(4) 
-        
-        # Bajamos 5 veces para asegurar alcanzar el último elemento de la lista desplegable
         pyautogui.press('enter')
         time.sleep(1)
 
@@ -219,8 +306,9 @@ if __name__ == "__main__":
         datos = extraer_de_dinahosting(HACE_CUANTOS_DIAS)
 
     if datos:
+        # Las dos líneas siguientes arrancan el rellenado automático en Vision.
         driver_v = preparar_vision()
         ejecutar_rellenado_pixeles(datos)
-        print("Finalizado con éxito.")
+        print("Datos listos. Rellenado en Vision desactivado (modo prueba).")
     else:
         print(f"No hay datos disponibles para la fecha seleccionada ({HACE_CUANTOS_DIAS} días atrás).")

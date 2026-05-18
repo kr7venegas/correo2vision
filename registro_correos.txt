@@ -1,2 +1,2 @@
-2026-05-15
-[{'mail_id': 'mail-ref-2454', 'Correo electrónico': 'thorbenhnz@gmail.com', 'Dirección de recogida': 'Placeta Zarate', 'Número de la calle': '5', 'Número de enseres': '1', 'Línea Blanca (Electrodomésticos)': 'Caldera'}, {'mail_id': 'mail-ref-2453', 'Correo electrónico': 'co15mrm@gmail.com', 'Dirección de recogida': 'Calle Encina', 'Número de la calle': '18151', 'Número de enseres': '2', 'Mobiliario y Descanso': 'Colchón\nCabecero de cama'}]
+2026-05-18
+[{'mail_id': 'mail-ref-2497', 'Correo electrónico': 'danix.1998@gmail.com', 'Dirección de recogida': 'Avenida Dílar', 'Número de la calle': '85', 'Número de enseres': '5', 'Mobiliario y Descanso': 'Cómoda\nEstantería'}]
