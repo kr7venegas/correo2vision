@@ -12,7 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 # ==================================================
 # CONFIGURACIÓN GENERAL
 # ==================================================
-HACE_CUANTOS_DIAS = 0 
+HACE_CUANTOS_DIAS = 0
 
 # ==================================================
 # CONFIGURACIÓN DE COORDENADAS PÍXELES
@@ -20,10 +20,11 @@ HACE_CUANTOS_DIAS = 0
 COORD_BOTON_AÑADIR     = (532, 288)    
 COORD_CAMPO_TIPO       = (972, 455)      
 COORD_SOLICITADO       = (1079, 303)
+COORD_PRIORIDAD        = (975, 640)
 COORD_CALLE            = (1110, 358)
 COORD_NUMERO           = (1212, 354)
 COORD_SCROLL_ENSERES   = (842, 594)  
-COORD_ENSERES          = (741, 532)  
+COORD_ENSERES          = (740, 595)  
 COORD_OBSERVACIONES    = (750, 680)
 COORD_BOTON_GUARDAR    = (1202, 214)
 
@@ -54,7 +55,7 @@ def construir_descripcion(item):
         valor = item.get(clave, "").strip()
         if valor:
             detalles.append(valor)
-    return " | ".join(detalles) if detalles else "Recogida de muebles/enseres"
+    return " | ".join(detalles) if detalles else "CALLCENTER"
 
 def preparar_vision():
     options = Options()
@@ -88,16 +89,22 @@ def ejecutar_rellenado_pixeles(datos):
         
         # 2. Tipo Incidencia
         pyautogui.click(COORD_CAMPO_TIPO)
-        pyautogui.write("recogida de muebles y enseres", interval=0.03)
+        pyautogui.write("CALLCENTER", interval=0.03)
         time.sleep(3)
         pyautogui.press('down')
         pyautogui.press('enter')
         
-        # 3. Solicitado
+        # 3. Solicitado y Prioridad Alta
         pyautogui.click(COORD_SOLICITADO)
         pyautogui.write("BSRME")
         time.sleep(0.5)
-        pyautogui.press('tab')
+        
+        pyautogui.click(COORD_PRIORIDAD)
+        time.sleep(0.5)
+        pyautogui.write("Alta")
+        time.sleep(0.5)
+        pyautogui.press('enter')
+        time.sleep(0.5)
 
         # 4. Calle
         dir_orig = item.get("Dirección de recogida", "")
@@ -105,6 +112,10 @@ def ejecutar_rellenado_pixeles(datos):
         pyautogui.click(COORD_CALLE)
         pyautogui.write(calle, interval=0.04)
         time.sleep(4) 
+        
+        for _ in range(5):
+            pyautogui.press('down')
+            time.sleep(0.1)
         pyautogui.press('enter')
         time.sleep(1)
 
@@ -128,6 +139,7 @@ def ejecutar_rellenado_pixeles(datos):
         
         # 9. Guardar
         pyautogui.click(COORD_BOTON_GUARDAR)
+        print(f"OK: Registro {item.get('mail_id')} procesado con canales corregidos.")
         time.sleep(8) 
 
 if __name__ == "__main__":
@@ -136,6 +148,6 @@ if __name__ == "__main__":
     if datos:
         driver_v = preparar_vision()
         ejecutar_rellenado_pixeles(datos)
-        print("[PROCESO TERMINADO] Rellenado en Vision completado.")
+        print("[PROCESO TERMINADO] Rellenado en Vision completado con éxito.")
     else:
         print(f"[ALERTA] No existen datos guardados localmente para la fecha seleccionada ({HACE_CUANTOS_DIAS} días atrás). Ejecuta primero 'extractor_correo.py'.")

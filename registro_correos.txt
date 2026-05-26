@@ -1,2 +1,2 @@
-2026-05-18
-[{'mail_id': 'mail-ref-2497', 'Correo electrónico': 'danix.1998@gmail.com', 'Dirección de recogida': 'Avenida Dílar', 'Número de la calle': '85', 'Número de enseres': '5', 'Mobiliario y Descanso': 'Cómoda\nEstantería'}]
+2026-05-26
+[{'mail_id': 'mail-ref-2734', 'Correo electrónico': 'silviaperegrina8@gmail.com', 'Dirección de recogida': 'Calle Torre de la Bruja', 'Número de la calle': '8', 'Número de enseres': '5', 'Mobiliario y Descanso': 'Armario\nSilla de oficina'}]
