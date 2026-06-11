@@ -13,7 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 # ==================================================
 # CONFIGURACIÓN GENERAL
 # ==================================================
-HACE_CUANTOS_DIAS = 1
+HACE_CUANTOS_DIAS = 0
 
 # ==================================================
 # CONFIGURACIÓN DE COORDENADAS PÍXELES

@@ -19,7 +19,7 @@ except ImportError:
 # ==================================================
 # CONFIGURACIÓN GENERAL
 # ==================================================
-HACE_CUANTOS_DIAS = 1  # Configurado a 0 para buscar los correos de hoy
+HACE_CUANTOS_DIAS = 0  # Configurado a 0 para buscar los correos de hoy
 
 # ==================================================
 # SEGURIDAD Y CREDENCIALES
