@@ -9,10 +9,17 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+# Intentar importar openpyxl para el archivo Excel nativo
+try:
+    import openpyxl
+    OPENPYXL_DISPONIBLE = True
+except ImportError:
+    OPENPYXL_DISPONIBLE = False
+
 # ==================================================
 # CONFIGURACIÓN GENERAL
 # ==================================================
-HACE_CUANTOS_DIAS = 0
+HACE_CUANTOS_DIAS = 1  # Configurado a 0 para buscar los correos de hoy
 
 # ==================================================
 # SEGURIDAD Y CREDENCIALES
@@ -36,61 +43,80 @@ def construir_descripcion(item):
             detalles.append(valor)
     return " | ".join(detalles) if detalles else "Recogida de muebles/enseres"
 
-def guardar_csv(data, dias_atras):
-    """Genera un CSV con codificación utf-8-sig para asegurar la compatibilidad de tildes."""
+def generar_filas_datos(data, dias_atras):
+    """Estructura las filas exactamente con el orden y campos requeridos."""
+    fecha_archivo = (datetime.now() - timedelta(days=dias_atras)).strftime('%Y-%m-%d')
+    fecha_hora_registro = datetime.now().strftime('%d/%m/%Y %H:%M')
+    filas = []
+
+    for i, item in enumerate(data, start=1):
+        cod_aviso = f"CC-{fecha_archivo}-{i}"
+        dir_orig = item.get("Dirección de recogida", "")
+        partes = dir_orig.split()
+        calle = " ".join(partes[1:]) if len(partes) > 1 else dir_orig
+        numcalle = item.get("Número de la calle", "0")
+        descripcion = construir_descripcion(item)
+
+        fila = [
+            cod_aviso,           # CodAviso
+            fecha_hora_registro, # FechaHoraRegistro
+            "Alta",              # Prioridad
+            dir_orig,            # localizacion
+            "",                  # barrio
+            calle,               # calle
+            numcalle,            # numcalle
+            "solicitud de retirada de muebles y enseres", # incidencia
+            descripcion,         # descripcion
+            "A revisar por el Área", # estado
+            "", "", "", "", "",  # Datos personales vacíos
+            "SERVICIO_RECOGIDA_MUEBLES", # usuario_asignado
+            "", "", "", "", "", "", "", "", "", # Fotos vacías
+            "CALLCENTER",        # categoria
+            "BSRME",             # canal
+            "",                  # incidencia_subtipo
+            "", "", "", "", "", "", "", "" # Resto de campos vacíos
+        ]
+        filas.append(fila)
+    return filas
+
+def guardar_csv(cabecera, filas, dias_atras):
+    """Genera el archivo CSV delimitado por punto y coma."""
     fecha_archivo = (datetime.now() - timedelta(days=dias_atras)).strftime('%Y-%m-%d')
     nombre_csv = f"incidencias_BSRME_{fecha_archivo}.csv"
-
-    cabecera = [
-        "CodAviso", "FechaHoraRegistro", "Prioridad", "localizacion", "barrio",
-        "calle", "numcalle", "incidencia", "descripcion", "estado",
-        "nombre_peticionario", "procedencia", "telefono", "movil", "email",
-        "usuario_asignado", "solucion", "fecha_fin", "tipo_resolucion",
-        "Foto1", "Foto2", "Foto3", "Foto4", "FotoR1", "FotoR2",
-        "categoria", "canal", "incidencia_subtipo", "incidencia_detalle",
-        "fecha_evento", "CT", "ampliacion_direccion", "fecha_inicio",
-        "descripcion_iniciado", "matricula", "ID"
-    ]
-
-    fecha_hora_registro = datetime.now().strftime('%d/%m/%Y %H:%M')
-
     try:
         with open(nombre_csv, "w", newline="", encoding="utf-8-sig") as f:
             writer = csv.writer(f, delimiter=";")
             writer.writerow(cabecera)
-
-            for i, item in enumerate(data, start=1):
-                cod_aviso = f"CC-{fecha_archivo}-{i}"
-                dir_orig = item.get("Dirección de recogida", "")
-                partes = dir_orig.split()
-                calle = " ".join(partes[1:]) if len(partes) > 1 else dir_orig
-                numcalle = item.get("Número de la calle", "0")
-                descripcion = construir_descripcion(item)
-
-                fila = [
-                    cod_aviso,           # CodAviso
-                    fecha_hora_registro, # FechaHoraRegistro
-                    "Alta",              # Prioridad
-                    dir_orig,            # localizacion
-                    "",                  # barrio
-                    calle,               # calle
-                    numcalle,            # numcalle
-                    "solicitud de retirada de muebles y enseres", # incidencia
-                    descripcion,         # descripcion
-                    "A revisar por el Área", # estado
-                    "", "", "", "", "",  # Datos personales vacíos
-                    "SERVICIO_RECOGIDA_MUEBLES", # usuario_asignado
-                    "", "", "", "", "", "", "", "", "", # Fotos vacías
-                    "CALLCENTER",        # categoria
-                    "BSRME",             # canal
-                    "",                  # incidencia_subtipo <--- CORREGIDO (VACÍO)
-                    "", "", "", "", "", "", "", "" # Resto de campos vacíos
-                ]
-                writer.writerow(fila)
-
+            writer.writerows(filas)
         print(f"[CSV] Archivo guardado correctamente: {nombre_csv}")
     except Exception as e:
         print(f"Error guardando CSV: {e}")
+
+def guardar_xlsx(cabecera, filas, dias_atras):
+    """Genera el archivo Excel nativo en formato .xlsx."""
+    if not OPENPYXL_DISPONIBLE:
+        print("[ALERTA XLSX] No se pudo crear el .xlsx porque 'openpyxl' no está instalado. Ejecuta: pip install openpyxl")
+        return
+
+    fecha_archivo = (datetime.now() - timedelta(days=dias_atras)).strftime('%Y-%m-%d')
+    nombre_xlsx = f"incidencias_BSRME_{fecha_archivo}.xlsx"
+    
+    try:
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Incidencias"
+        
+        # Escribir la cabecera
+        ws.append(cabecera)
+        
+        # Escribir todas las filas de datos
+        for fila in filas:
+            ws.append(fila)
+            
+        wb.save(nombre_xlsx)
+        print(f"[XLSX] Archivo Excel guardado correctamente: {nombre_xlsx}")
+    except Exception as e:
+        print(f"Error guardando XLSX: {e}")
 
 def extraer_de_dinahosting(dias_atras):
     print(f"[DINAHOSTING] Buscando correos de hace {dias_atras} días...")
@@ -146,7 +172,23 @@ def extraer_de_dinahosting(dias_atras):
         
         if resultados:
             guardar_datos_locales(resultados, dias_atras)
-            guardar_csv(resultados, dias_atras)
+            
+            # Definición de columnas comunes
+            cabecera = [
+                "CodAviso", "FechaHoraRegistro", "Prioridad", "localizacion", "barrio",
+                "calle", "numcalle", "incidencia", "descripcion", "estado",
+                "nombre_peticionario", "procedencia", "telefono", "movil", "email",
+                "usuario_asignado", "solucion", "fecha_fin", "tipo_resolucion",
+                "Foto1", "Foto2", "Foto3", "Foto4", "FotoR1", "FotoR2",
+                "categoria", "canal", "incidencia_subtipo", "incidencia_detalle",
+                "fecha_evento", "CT", "ampliacion_direccion", "fecha_inicio",
+                "descripcion_iniciado", "matricula", "ID"
+            ]
+            filas_procesadas = generar_filas_datos(resultados, dias_atras)
+            
+            # Exportaciones masivas
+            guardar_csv(cabecera, filas_procesadas, dias_atras)
+            guardar_xlsx(cabecera, filas_procesadas, dias_atras)
         
         driver.quit()
         return resultados

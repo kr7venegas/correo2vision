@@ -1,0 +1,54 @@
+﻿CodAviso;FechaHoraRegistro;Prioridad;localizacion;barrio;calle;numcalle;incidencia;descripcion;estado;nombre_peticionario;procedencia;telefono;movil;email;usuario_asignado;solucion;fecha_fin;tipo_resolucion;Foto1;Foto2;Foto3;Foto4;FotoR1;FotoR2;categoria;canal;incidencia_subtipo;incidencia_detalle;fecha_evento;CT;ampliacion_direccion;fecha_inicio;descripcion_iniciado;matricula;ID
+CC-2026-06-10-1;11/06/2026 07:42;Alta;Calle Tórtola;;Tórtola;27;solicitud de retirada de muebles y enseres;Sofá;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-2;11/06/2026 07:42;Alta;Calle Pedro Antonio de Alarcón;;Pedro Antonio de Alarcón;17;solicitud de retirada de muebles y enseres;"Mesa de comedor
+Silla de comedor
+Estructura de cama
+Cabecero de cama";A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-3;11/06/2026 07:42;Alta;Avenida Barcelona;;Barcelona;12;solicitud de retirada de muebles y enseres;Colchón;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-4;11/06/2026 07:42;Alta;Calle Isla Cristina;;Isla Cristina;Bloque 2;solicitud de retirada de muebles y enseres;"Sofá
+Silla de comedor";A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-5;11/06/2026 07:42;Alta;Calle Zenete;;Zenete;64;solicitud de retirada de muebles y enseres;Recogida de muebles/enseres;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-6;11/06/2026 07:42;Alta;Calle Isla Cristina;;Isla Cristina;Bloque dos;solicitud de retirada de muebles y enseres;Colchón;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-7;11/06/2026 07:42;Alta;Calle Albuñol;;Albuñol;3;solicitud de retirada de muebles y enseres;Recogida de muebles/enseres;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-8;11/06/2026 07:42;Alta;Calle Torre de los Hidalgos;;Torre de los Hidalgos;1;solicitud de retirada de muebles y enseres;Recogida de muebles/enseres;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-9;11/06/2026 07:42;Alta;Calle Mozart;;Mozart;8;solicitud de retirada de muebles y enseres;"Estantería
+Sofá";A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-10;11/06/2026 07:42;Alta;Camino Ronda;;Ronda;134;solicitud de retirada de muebles y enseres;Recogida de muebles/enseres;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-11;11/06/2026 07:42;Alta;Calle Ribera del Genil;;Ribera del Genil;2;solicitud de retirada de muebles y enseres;Sillón;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-12;11/06/2026 07:42;Alta;Avenida Salvador Allende;;Salvador Allende;Avenida;solicitud de retirada de muebles y enseres;"Armario
+Cajonera";A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-13;11/06/2026 07:42;Alta;Calle Águila;;Águila;10;solicitud de retirada de muebles y enseres;"Sofá
+Colchón";A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-14;11/06/2026 07:42;Alta;Plaza Boqueron;;Boqueron;2;solicitud de retirada de muebles y enseres;"Armario
+Mesa de centro
+Escritorio";A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-15;11/06/2026 07:42;Alta;Calle Ave María;;Ave María;2;solicitud de retirada de muebles y enseres;Ropero;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-16;11/06/2026 07:42;Alta;Plaza Parque Norte;;Parque Norte;7;solicitud de retirada de muebles y enseres;Silla de oficina;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-17;11/06/2026 07:42;Alta;Calle Sultana;;Sultana;3;solicitud de retirada de muebles y enseres;Recogida de muebles/enseres;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-18;11/06/2026 07:42;Alta;Calle Marqués de Falces;;Marqués de Falces;4;solicitud de retirada de muebles y enseres;Mesa auxiliar;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-19;11/06/2026 07:42;Alta;Calle Compositor Ruiz Aznar;;Compositor Ruiz Aznar;17;solicitud de retirada de muebles y enseres;Recogida de muebles/enseres;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-20;11/06/2026 07:42;Alta;Calle Palencia;;Palencia;25;solicitud de retirada de muebles y enseres;Armario;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-21;11/06/2026 07:42;Alta;Calle Trajano;;Trajano;3;solicitud de retirada de muebles y enseres;Butaca;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-22;11/06/2026 07:42;Alta;Calle Agustina de Aragón;;Agustina de Aragón;14;solicitud de retirada de muebles y enseres;"Canapé
+Colchón";A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-23;11/06/2026 07:42;Alta;Calle María Auxiliadora;;María Auxiliadora;1;solicitud de retirada de muebles y enseres;Recogida de muebles/enseres;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-24;11/06/2026 07:42;Alta;Calle Jimena;;Jimena;27;solicitud de retirada de muebles y enseres;"Cómoda
+Vitrina
+Mesita de noche
+Sillón
+Butaca";A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-25;11/06/2026 07:42;Alta;Calle Castañeda;;Castañeda;2;solicitud de retirada de muebles y enseres;Recogida de muebles/enseres;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-26;11/06/2026 07:42;Alta;Calle Polo y Caña;;Polo y Caña;10;solicitud de retirada de muebles y enseres;Colchón;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-27;11/06/2026 07:42;Alta;Calle Periodista José María Carulla;;Periodista José María Carulla;2;solicitud de retirada de muebles y enseres;Cajonera;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-28;11/06/2026 07:42;Alta;Calle Otura;;Otura;3;solicitud de retirada de muebles y enseres;Recogida de muebles/enseres;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-29;11/06/2026 07:42;Alta;Calle Santa Ana;;Santa Ana;12;solicitud de retirada de muebles y enseres;"Somier
+Colchón";A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-30;11/06/2026 07:42;Alta;Calle Nueva de San Antón;;Nueva de San Antón;12;solicitud de retirada de muebles y enseres;"Mesa de centro
+Sofá";A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-31;11/06/2026 07:42;Alta;Calle Manuel de Falla;;Manuel de Falla;17;solicitud de retirada de muebles y enseres;"Butaca
+Estructura de cama";A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-32;11/06/2026 07:42;Alta;Calle Muladies;;Muladies;2;solicitud de retirada de muebles y enseres;Recogida de muebles/enseres;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-33;11/06/2026 07:42;Alta;Calle Pintor Manuel Maldonado;;Pintor Manuel Maldonado;4;solicitud de retirada de muebles y enseres;"Estantería
+Silla de comedor
+Colchón";A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-10-34;11/06/2026 07:42;Alta;Calle Aljibe del Gato;;Aljibe del Gato;1;solicitud de retirada de muebles y enseres;Recogida de muebles/enseres;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;

@@ -2,6 +2,7 @@ import os
 import time
 import ast
 import pyautogui
+import pyperclip  # Recuerda instalarlo ejecutando en tu terminal: pip install pyperclip
 from datetime import datetime, timedelta
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -12,7 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 # ==================================================
 # CONFIGURACIÓN GENERAL
 # ==================================================
-HACE_CUANTOS_DIAS = 0
+HACE_CUANTOS_DIAS = 1
 
 # ==================================================
 # CONFIGURACIÓN DE COORDENADAS PÍXELES
@@ -24,7 +25,7 @@ COORD_PRIORIDAD        = (975, 640)
 COORD_CALLE            = (1110, 358)
 COORD_NUMERO           = (1212, 354)
 COORD_SCROLL_ENSERES   = (842, 594)  
-COORD_ENSERES          = (740, 595)  
+COORD_ENSERES          = (785, 595)  
 COORD_OBSERVACIONES    = (750, 680)
 COORD_BOTON_GUARDAR    = (1202, 214)
 
@@ -106,16 +107,21 @@ def ejecutar_rellenado_pixeles(datos):
         pyautogui.press('enter')
         time.sleep(0.5)
 
-        # 4. Calle
+        # 4. Calle (Corregido con pyperclip y pulsación hacia arriba)
         dir_orig = item.get("Dirección de recogida", "")
         calle = " ".join(dir_orig.split()[1:]) if len(dir_orig.split()) > 1 else dir_orig
-        pyautogui.click(COORD_CALLE)
-        pyautogui.write(calle, interval=0.04)
-        time.sleep(4) 
         
-        for _ in range(5):
-            pyautogui.press('down')
-            time.sleep(0.1)
+        pyautogui.click(COORD_CALLE)
+        time.sleep(0.5)
+        
+        # Copiar calle al portapapeles y pegar (evita problemas de tildes)
+        pyperclip.copy(calle)
+        pyautogui.hotkey('ctrl', 'v')
+        time.sleep(4) # Espera a que cargue el desplegable de direcciones
+        
+        # LÓGICA NUEVA: 1 click hacia arriba selecciona el último elemento directamente
+        pyautogui.press('up')
+        time.sleep(0.2)
         pyautogui.press('enter')
         time.sleep(1)
 
@@ -125,22 +131,29 @@ def ejecutar_rellenado_pixeles(datos):
         pyautogui.press('backspace')
         pyautogui.write(str(item.get("Número de la calle", "1")))
         
-        # 6. SCROLL DOBLE CLICK
-        pyautogui.doubleClick(COORD_SCROLL_ENSERES)
+        # 6. SCROLL CORREGIDO (Usa la rueda del ratón de forma nativa)
+        # Hacemos clic primero en la zona para darle foco al formulario intermedio
+        pyautogui.click(COORD_SCROLL_ENSERES)
+        time.sleep(0.2)
+        # Un valor de -300 o -400 equivale a deslizar la rueda hacia abajo varias veces
+        pyautogui.scroll(-400) 
         time.sleep(2)
         
         # 7. Número de enseres
         pyautogui.click(COORD_ENSERES)
         pyautogui.write(str(item.get("Número de enseres", "1")))
         
-        # 8. Observaciones
+        # 8. Observaciones (Corregido también con pyperclip por si contiene tildes)
         pyautogui.click(COORD_OBSERVACIONES)
-        pyautogui.write(texto_obs.replace("\n", " "), interval=0.01)
+        pyperclip.copy(texto_obs.replace("\n", " "))
+        pyautogui.hotkey('ctrl', 'v')
+        time.sleep(0.5)
         
         # 9. Guardar
         pyautogui.click(COORD_BOTON_GUARDAR)
         print(f"OK: Registro {item.get('mail_id')} procesado con canales corregidos.")
         time.sleep(8) 
+
 
 if __name__ == "__main__":
     datos = cargar_datos_locales(HACE_CUANTOS_DIAS)
