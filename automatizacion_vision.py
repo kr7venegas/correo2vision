@@ -119,9 +119,7 @@ def ejecutar_rellenado_pixeles(datos):
         pyautogui.hotkey('ctrl', 'v')
         time.sleep(4) # Espera a que cargue el desplegable de direcciones
         
-        # LÓGICA NUEVA: 1 click hacia arriba selecciona el último elemento directamente
-        pyautogui.press('up')
-        time.sleep(0.2)
+        # LÓGICA NUEVA: Selecciona directamente la primera opción con un ENTER
         pyautogui.press('enter')
         time.sleep(1)
 
