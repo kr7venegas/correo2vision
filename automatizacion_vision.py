@@ -33,8 +33,8 @@ COORD_BOTON_GUARDAR    = (1202, 214)
 # SEGURIDAD Y CREDENCIALES
 # ==================================================
 pyautogui.FAILSAFE = True  
-FCCMA_USER = os.getenv("FCCMA_USER",  "gonzaled1014")
-FCCMA_PASS = os.getenv("FCCMA_PASS",  "UPl()adingkr7")
+FCCMA_USER = os.getenv("FCCMA_USER",  "aguilarf0511")
+FCCMA_PASS = os.getenv("FCCMA_PASS",  "Sanalberto1!")
 
 def cargar_datos_locales(dias_atras):
     nombre_archivo = "registro_correos.txt"

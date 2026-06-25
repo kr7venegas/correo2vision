@@ -1,0 +1,15 @@
+﻿CodAviso;FechaHoraRegistro;Prioridad;localizacion;barrio;calle;numcalle;incidencia;descripcion;estado;nombre_peticionario;procedencia;telefono;movil;email;usuario_asignado;solucion;fecha_fin;tipo_resolucion;Foto1;Foto2;Foto3;Foto4;FotoR1;FotoR2;categoria;canal;incidencia_subtipo;incidencia_detalle;fecha_evento;CT;ampliacion_direccion;fecha_inicio;descripcion_iniciado;matricula;ID
+CC-2026-06-25-1;25/06/2026 12:06;Alta;Calle Cuevas Coloradas;;Cuevas Coloradas;1;solicitud de retirada de muebles y enseres;Recogida de muebles/enseres;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-25-2;25/06/2026 12:06;Alta;Calle Alcalá de Henares;;Alcalá de Henares;8;solicitud de retirada de muebles y enseres;Mesa de oficina;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-25-3;25/06/2026 12:06;Alta;Carril Tomasas;;Tomasas;1;solicitud de retirada de muebles y enseres;"Termo eléctrico
+Caldera";A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-25-4;25/06/2026 12:06;Alta;Calle Zorahaida;;Zorahaida;8;solicitud de retirada de muebles y enseres;Recogida de muebles/enseres;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-25-5;25/06/2026 12:06;Alta;Plaza Duque de San Pedro Galatino;;Duque de San Pedro Galatino;0;solicitud de retirada de muebles y enseres;Colchón;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-25-6;25/06/2026 12:06;Alta;Avenida América;;América;55;solicitud de retirada de muebles y enseres;Armario;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-25-7;25/06/2026 12:06;Alta;Calle Musico Vicente Zarzo;;Musico Vicente Zarzo;3;solicitud de retirada de muebles y enseres;"Sillón
+Somier
+Colchón | Lavadora";A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-25-8;25/06/2026 12:06;Alta;Calle Lope de Vega;;Lope de Vega;3;solicitud de retirada de muebles y enseres;Recogida de muebles/enseres;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-25-9;25/06/2026 12:06;Alta;Calle Doctor Azpitarte;;Doctor Azpitarte;5;solicitud de retirada de muebles y enseres;Recogida de muebles/enseres;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-25-10;25/06/2026 12:06;Alta;Calle Pérez Galdós;;Pérez Galdós;2;solicitud de retirada de muebles y enseres;Armario;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
+CC-2026-06-25-11;25/06/2026 12:06;Alta;Calle Profesor Vicente Callao;;Profesor Vicente Callao;3;solicitud de retirada de muebles y enseres;Secadora;A revisar por el Área;;;;;;SERVICIO_RECOGIDA_MUEBLES;;;;;;;;;;CALLCENTER;BSRME;;;;;;;;;
